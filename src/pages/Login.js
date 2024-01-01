@@ -1,4 +1,5 @@
 import "./Login.css";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -6,8 +7,22 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword)
+  }
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
     <Box className="login-container">
       <Typography
@@ -39,7 +54,8 @@ const Login = () => {
       />
       <br />
       <TextField
-        id="Password"
+        id="Password" 
+        type={showPassword ? "text" : "password"}
         label="Password"
         variant="outlined"
         sx={{
@@ -53,17 +69,43 @@ const Login = () => {
             color: "#ed288b",
           },
         }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+                edge="end"
+                style={{ marginRight: "-12px" }}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <br />
       <FormControlLabel
-        control={<Checkbox defaultChecked sx={{color:"#ed288b"}} />}
+        control={<Checkbox defaultChecked sx={{ color: "#ed288b" }} />}
         label="Remember me"
       />
       <br />
+      <Button
+        variant="contained"
+        sx={{
+          fontFamily: "Oxanium, cursive",
+          width: "21.7rem",
+          backgroundColor: "#ed288b",
+          "&:hover": {
+            backgroundColor: "#cc27c9",
+          },
+        }}
+      >
+        Login
+      </Button>
       <Link to="/register">
-        <Button variant="contained" sx={{fontSize:"1rem",width:"22rem",background:"#ed288b"}}>
-          Login
-          </Button>
+        <p className="text">Don't have an account? Register</p>
       </Link>
     </Box>
   );
