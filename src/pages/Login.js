@@ -92,6 +92,7 @@ const Login = () => {
       />
       <br />
       <Button
+        type="submit"
         variant="contained"
         sx={{
           fontFamily: "Oxanium, cursive",
