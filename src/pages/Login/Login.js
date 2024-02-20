@@ -11,9 +11,20 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import httpRequest from "../../httpRequest";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword)
@@ -22,6 +33,21 @@ const Login = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const handleLogin = async () => {
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
+
+    try {
+      await httpRequest.post("http://localhost:5000/login", {
+        email,
+        password,
+      });
+
+      window.location.href = "/";
+    } catch (error) {}
+};
 
   return (
     <Box className="login-container">
@@ -38,6 +64,8 @@ const Login = () => {
       </Typography>
       <TextField
         id="Email"
+        value={email}
+        onChange={handleEmailChange}
         label="Email"
         variant="outlined"
         sx={{
@@ -55,6 +83,7 @@ const Login = () => {
       <br />
       <TextField
         id="Password" 
+        onChange={handlePasswordChange}
         type={showPassword ? "text" : "password"}
         label="Password"
         variant="outlined"
@@ -92,6 +121,8 @@ const Login = () => {
       />
       <br />
       <Button
+        type="button"
+        onClick={handleLogin}
         variant="contained"
         sx={{
           fontFamily: "Oxanium, cursive",
