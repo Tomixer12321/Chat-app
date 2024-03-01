@@ -9,8 +9,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import httpRequest from "../../httpRequest";
 
 const Register = () => {
+  const [nameValid, setNameValid] = useState(true);
+  const [emailValid, setEmailValid] = useState(true);
+  const [passwordValid, setPasswordValid] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => {
@@ -20,8 +24,62 @@ const Register = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const validateName = (event) => {
+    const name = event.target.value;
+    if (name.length < 3 && name.length > 0) {
+      setNameValid(false);
+    } else {
+      setNameValid(true);
+    }
+  };
+
+  const validateEmail = (event) => {
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const email = event.target.value;
+    if (!emailRegex.test(email) && email.length > 0) {
+      setEmailValid(false);
+    } else {
+      setEmailValid(true);
+    }
+  };
+
+  const validatePassword = (event) => {
+    const password = event.target.value;
+    if (password.length < 6 && password.length > 0) {
+      setPasswordValid(false);
+    } else {
+      setPasswordValid(true);
+    }
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const name = data.get("name");
+    const email = data.get("email");
+    const password = data.get("password");
+
+    console.log(emailValid)
+
+    if (nameValid && emailValid && passwordValid) {
+      try {
+        await httpRequest.post("http://localhost:5000/register", {
+          name,
+          email,
+          password,
+        });
+        window.location.href = "/";
+      } catch (error) {}
+    }
+  };
+
   return (
-    <Box className="register-container">
+    <Box
+      component="form"
+      className="register-container"
+      onSubmit={submitHandler}
+    >
       <Typography
         component="h1"
         variant="h4"
@@ -34,9 +92,11 @@ const Register = () => {
         REGISTER
       </Typography>
       <TextField
-        id="Name"
+        id="name"
         label="Name"
+        name="name"
         variant="outlined"
+        onBlur={validateName}
         sx={{
           width: "18%",
           "& .MuiOutlinedInput-root": {
@@ -51,9 +111,11 @@ const Register = () => {
       />
       <br />
       <TextField
-        id="Email"
+        id="email"
         label="Email"
+        name="email"
         variant="outlined"
+        onBlur={validateEmail}
         sx={{
           width: "18%",
           "& .MuiOutlinedInput-root": {
@@ -68,10 +130,12 @@ const Register = () => {
       />
       <br />
       <TextField
-        id="Password" 
+        id="password"
         type={showPassword ? "text" : "password"}
         label="Password"
+        name="password"
         variant="outlined"
+        onBlur={validatePassword}
         sx={{
           width: "18%",
           "& .MuiOutlinedInput-root": {
@@ -100,8 +164,8 @@ const Register = () => {
         }}
       />
       <br />
-      <Link to="/login">
       <Button
+        type="submit"
         variant="contained"
         sx={{
           fontFamily: "Oxanium, cursive",
@@ -114,8 +178,7 @@ const Register = () => {
       >
         Register
       </Button>
-      </Link>
     </Box>
   );
 };
-export default Register
+export default Register;

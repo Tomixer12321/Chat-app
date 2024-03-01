@@ -34,7 +34,7 @@ const Login = () => {
     event.preventDefault();
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
@@ -50,7 +50,7 @@ const Login = () => {
 };
 
   return (
-    <Box className="login-container">
+    <Box className="login-container" onSubmit={handleLogin}>
       <Typography
         component="h1"
         variant="h4"
@@ -122,7 +122,6 @@ const Login = () => {
       <br />
       <Button
         type="button"
-        onClick={handleLogin}
         variant="contained"
         sx={{
           fontFamily: "Oxanium, cursive",
