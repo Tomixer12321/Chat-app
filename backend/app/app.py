@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask
 from flask_cors import CORS
 from models import db
 import sys

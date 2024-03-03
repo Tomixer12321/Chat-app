@@ -60,7 +60,7 @@ const Register = () => {
     const email = data.get("email");
     const password = data.get("password");
 
-    console.log(emailValid)
+
 
     if (nameValid && emailValid && passwordValid) {
       try {
@@ -69,7 +69,7 @@ const Register = () => {
           email,
           password,
         });
-        window.location.href = "/";
+        window.location.href = "/login";
       } catch (error) {}
     }
   };
