@@ -60,7 +60,7 @@ const Register = () => {
     const email = data.get("email");
     const password = data.get("password");
 
-
+    console.log(event.currentTarget)
 
     if (nameValid && emailValid && passwordValid) {
       try {

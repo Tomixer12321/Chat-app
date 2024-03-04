@@ -15,8 +15,8 @@ import httpRequest from "../../httpRequest";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -27,30 +27,30 @@ const Login = () => {
   };
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
   const handleLogin = async (event) => {
+    event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
-
+    console.log(event.currentTarget)
     try {
       await httpRequest.post("http://localhost:5000/login", {
         email,
         password,
       });
-
       window.location.href = "/";
     } catch (error) {}
-};
+  };
 
   return (
-    <Box className="login-container" onSubmit={handleLogin}>
+    <Box component="form" className="login-container" onSubmit={handleLogin}>
       <Typography
         component="h1"
         variant="h4"
@@ -63,7 +63,8 @@ const Login = () => {
         LOGIN
       </Typography>
       <TextField
-        id="Email"
+        id="email"
+        name="email"
         value={email}
         onChange={handleEmailChange}
         label="Email"
@@ -82,7 +83,8 @@ const Login = () => {
       />
       <br />
       <TextField
-        id="Password" 
+        id="password"
+        name="password"
         onChange={handlePasswordChange}
         type={showPassword ? "text" : "password"}
         label="Password"
@@ -121,7 +123,7 @@ const Login = () => {
       />
       <br />
       <Button
-        type="button"
+        type="submit"
         variant="contained"
         sx={{
           fontFamily: "Oxanium, cursive",
