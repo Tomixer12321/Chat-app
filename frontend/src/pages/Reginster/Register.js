@@ -60,17 +60,22 @@ const Register = () => {
     const email = data.get("email");
     const password = data.get("password");
 
-    console.log(event.currentTarget)
-
     if (nameValid && emailValid && passwordValid) {
       try {
-        await httpRequest.post("http://localhost:5000/register", {
+         const request=await httpRequest.post("http://localhost:5000/register", {
           name,
           email,
           password,
         });
+        console.log(request)
         window.location.href = "/login";
-      } catch (error) {}
+      } catch (error) {
+        if (error.response.status === 409) {
+          alert("ty vyjebane hovno ten user uz existuje");
+        } else {
+          console.log("Server error");
+        }
+      }
     }
   };
 
@@ -96,6 +101,8 @@ const Register = () => {
         label="Name"
         name="name"
         variant="outlined"
+        error={!nameValid}
+        helperText={!nameValid ? "Name must be at least 3 characters." : ""}
         onBlur={validateName}
         sx={{
           width: "18%",
@@ -115,6 +122,8 @@ const Register = () => {
         label="Email"
         name="email"
         variant="outlined"
+        error={!emailValid}
+        helperText={!emailValid ? "Incorrect email format." : ""}
         onBlur={validateEmail}
         sx={{
           width: "18%",
@@ -135,6 +144,8 @@ const Register = () => {
         label="Password"
         name="password"
         variant="outlined"
+        error={!passwordValid}
+        helperText={!passwordValid ? "Password must be at least 6 characters." : ""}
         onBlur={validatePassword}
         sx={{
           width: "18%",
@@ -178,6 +189,9 @@ const Register = () => {
       >
         Register
       </Button>
+      <Link to="/login">
+        <p className="text">Already have an account? Login</p>
+      </Link>
     </Box>
   );
 };

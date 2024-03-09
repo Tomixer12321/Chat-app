@@ -46,7 +46,13 @@ const Login = () => {
         password,
       });
       window.location.href = "/";
-    } catch (error) {}
+    } catch (error) {
+      if (error.response.status === 401) {
+        alert("Wrong email or password");
+      } else {
+        alert("Server error");
+      }
+    }
   };
 
   return (
@@ -85,6 +91,7 @@ const Login = () => {
       <TextField
         id="password"
         name="password"
+        value={password}
         onChange={handlePasswordChange}
         type={showPassword ? "text" : "password"}
         label="Password"
