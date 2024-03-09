@@ -71,7 +71,7 @@ const Register = () => {
         window.location.href = "/login";
       } catch (error) {
         if (error.response.status === 409) {
-          alert("ty vyjebane hovno ten user uz existuje");
+          alert("User already exists");
         } else {
           console.log("Server error");
         }
