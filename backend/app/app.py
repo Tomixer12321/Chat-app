@@ -18,13 +18,7 @@ if "CONFIG" in os.environ:
     app.config.from_envvar("CONFIG")
 
 
-
 db.init_app(app)
-
-
-@app.route('/')
-def hello():
-    return 'Hello, World!'
 
 
 def init_db():
