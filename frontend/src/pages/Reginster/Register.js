@@ -73,7 +73,7 @@ const Register = () => {
         if (error.response.status === 409) {
           alert("User already exists");
         } else {
-          console.log("Server error");
+          alert("Server error");
         }
       }
     }

@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, session, jsonify
+from models import db, User
 from flask_cors import CORS
 from models import db
+from authentication import authentication_bp
 import sys
 import os
-from authentication import authentication_bp
 
 app = Flask(__name__)
 
@@ -16,6 +17,20 @@ os.environ['CONFIG'] = "/login/backend/config.py"
 
 if "CONFIG" in os.environ:
     app.config.from_envvar("CONFIG")
+
+@app.route("/@me")
+def get_current_user():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    user = User.query.get(user_id)
+
+    return jsonify({
+        "name": user.name,
+        "email": user.email,
+    })
 
 
 db.init_app(app)
