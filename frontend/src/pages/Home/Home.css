@@ -3,23 +3,29 @@
   padding: 0;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
+.gray-box {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding-top: 350px;
+  border-radius: 5px;
+  width: 60%;
+  height: 50%;
 }
 
-.title {
-  text-align: center;
+.content-wrapper {
+  margin-left: 21%;
+  margin-top: 360px;
 }
 
-.login-link {
-  margin-top: 20px;
-}
-
-.login {
-  font-size: 1.5rem;
-  text-decoration: none;
+.gray-box .vertical-line {
+  position: absolute;
+  left: 20%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #ccc;
 }

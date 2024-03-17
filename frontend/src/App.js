@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route,} from "react-router-dom";
+import { Routes, Route,} from "react-router-dom";
 import { useContext } from "react";
 import Register from "./pages/Reginster/Register";
 import Login from "./pages/Login/Login";
