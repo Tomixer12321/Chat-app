@@ -13,17 +13,23 @@
   padding-top: 350px;
   border-radius: 5px;
   width: 60%;
-  height: 50%;
+  height: 50%;;
+}
+
+.box-wrapper {
+  position: absolute;
+  top: 0.5%;
+  right: 0.5%;
 }
 
 .content-wrapper {
-  margin-left: 21%;
-  margin-top: 360px;
+  margin-left: 24%;
+  margin-top: 400px;
 }
 
 .gray-box .vertical-line {
   position: absolute;
-  left: 20%;
+  left: 23%;
   top: 0;
   bottom: 0;
   width: 3px;
