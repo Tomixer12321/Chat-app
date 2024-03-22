@@ -1,12 +1,14 @@
 from flask import Flask, session, jsonify
-from models import db, User
+from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from models import db, User
 from models import db
 from authentication import authentication_bp
 import sys
 import os
 
 app = Flask(__name__)
+bcrypt = Bcrypt()
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app, supports_credentials=True)
@@ -17,6 +19,16 @@ os.environ['CONFIG'] = "/login/backend/config.py"
 
 if "CONFIG" in os.environ:
     app.config.from_envvar("CONFIG")
+
+with app.app_context():
+    db.create_all()
+
+    admin_user = User.query.filter_by(email='admin').first()
+    if not admin_user:
+        hashed_password = bcrypt.generate_password_hash('admin').decode('utf-8')
+        db.session.add(admin_user)
+        db.session.commit()
+
 
 @app.route("/@me")
 def get_current_user():

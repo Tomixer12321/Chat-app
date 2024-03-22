@@ -64,14 +64,9 @@ const Home = () => {
   return (
     <div className="gray-box">
       <div className="box-wrapper">
-      <IconButton sx={{ p: 0.1, color: "white" }} onClick={handleMenuOpen}>
+      <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
         <AccountCircleIcon
           fontSize="large"
-          sx={{
-            "&:hover": {
-              color: "#854de0",
-            },
-          }}
         />
       </IconButton>
       <Menu anchorEl={open} open={Boolean(open)} onClose={handleMenuClose}>
