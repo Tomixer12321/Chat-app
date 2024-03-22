@@ -5,8 +5,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import httpRequest from "../../httpRequest";
 import userContext from "../../context/user-context";
 import AuthContext from "../../context/auth-context";
+import ChangePasswordModal from "../../components/ChangePasswordModal";
 import "./Home.css";
-
 
 const Home = () => {
   const userCtx = useContext(userContext);
@@ -30,22 +30,21 @@ const Home = () => {
     setOpen(null);
   };
 
+  const handleClosePasswordModal = () => {
+    setChangePasswordOpen(false);
+  };
+
   const handleProfileModalOpen = () => {
     setShowProfileOpen(true);
     setOpen(null);
   };
 
-  const handleCloseProfileModal = () => {
-    setShowProfileOpen(false);
-  };
 
   const logoutUser = async () => {
     await httpRequest.post("//localhost:5000/logout");
     authContext.logout();
     window.location.href = "/login";
   };
-
-
 
   useEffect(() => {
     (async () => {
@@ -60,20 +59,29 @@ const Home = () => {
       }
     })();
   }, [userCtx]);
-    
+
   return (
     <div className="gray-box">
-      <div className="box-wrapper">
-      <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
-        <AccountCircleIcon
-          fontSize="large"
-        />
-      </IconButton>
-      <Menu anchorEl={open} open={Boolean(open)} onClose={handleMenuClose}>
-        <MenuItem onClick={handleProfileModalOpen}>Profile</MenuItem>
-        <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
-        <MenuItem onClick={logoutUser}>Log out</MenuItem>
-      </Menu>
+      <div
+        className="box-wrapper"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <div>
+          <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
+            <AccountCircleIcon sx={{ fontSize: 45 }} />
+          </IconButton>
+        </div>
+        <Menu
+          anchorEl={open}
+          open={Boolean(open)}
+          onClose={handleMenuClose}
+          sx={{ marginLeft: "-115px" }}             
+        >
+          <MenuItem onClick={handleProfileModalOpen}>Profile</MenuItem>
+          <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
+          <MenuItem onClick={logoutUser}>Log out</MenuItem>
+        </Menu>
+        <ChangePasswordModal open={changePasswordOpen} onClose={handleClosePasswordModal} />
       </div>
       <div className="content-wrapper">
         <TextField

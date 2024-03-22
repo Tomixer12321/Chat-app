@@ -55,9 +55,27 @@ def login_user():
         }), 200
     else:
         return jsonify({"error": "Unauthorized"}), 401
-   
-    
+
+
 @authentication_bp.route("/logout", methods=["POST"])
 def logout_user():
     session.pop("user_id", None)
     return jsonify({"success": True}), 204
+
+@authentication_bp.route("/change-password", methods=["POST"])
+def change_password():
+    user_id = session.get("user_id")
+
+    if user_id:
+        user = User.query.filter_by(id=user_id).first()
+        old_password = request.json["oldPassword"]
+        new_password = request.json["newPassword"]
+
+        if validate_password(user.password, old_password):
+            user.password = hash_password(new_password)
+            db.session.commit()
+            return jsonify({"success": True}), 200
+        else:
+            return jsonify({"error": "Unauthorized"}), 401
+    else:
+        return jsonify({"error": "Unauthorized"}), 401
