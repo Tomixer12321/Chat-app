@@ -39,7 +39,6 @@ def register():
         }), 201
 
 
-
 @authentication_bp.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -56,3 +55,9 @@ def login_user():
         }), 200
     else:
         return jsonify({"error": "Unauthorized"}), 401
+   
+    
+@authentication_bp.route("/logout", methods=["POST"])
+def logout_user():
+    session.pop("user_id", None)
+    return jsonify({"success": True}), 204
