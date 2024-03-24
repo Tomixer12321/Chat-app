@@ -1,14 +1,15 @@
 import { useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Avatar from '@mui/material/Avatar';
 import httpRequest from "../../httpRequest";
 import userContext from "../../context/user-context";
 import AuthContext from "../../context/auth-context";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import "./Home.css";
 
-const Home = () => {
+const Home = (props) => {
   const userCtx = useContext(userContext);
   const [userName, setUserName] = useState();
   const [email, setEmail] = useState(null);
@@ -16,6 +17,21 @@ const Home = () => {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [showProfileOpen, setShowProfileOpen] = useState(false);
   const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await httpRequest.get("http://localhost:5000/@me");
+        userCtx.setUserName(resp.data.name);
+        userCtx.setEmail(resp.data.email);
+        setUserName(resp.data.name);
+      } catch (error) {
+        window.location.href = "/login";
+        console.log("Not authenticated");
+      }
+    })();
+  }, [userCtx]);
+  
 
   const handleMenuOpen = (event) => {
     setOpen(event.currentTarget);
@@ -46,20 +62,6 @@ const Home = () => {
     window.location.href = "/login";
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await httpRequest.get("http://localhost:5000/@me");
-        userCtx.setUserName(resp.data.name);
-        userCtx.setEmail(resp.data.email);
-        setUserName(resp.data.name);
-      } catch (error) {
-        window.location.href = "/login";
-        console.log("Not authenticated");
-      }
-    })();
-  }, [userCtx]);
-
   return (
     <div className="gray-box">
       <div
@@ -68,14 +70,14 @@ const Home = () => {
       >
         <div>
           <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
-            <AccountCircleIcon sx={{ fontSize: 45 }} />
+            <Avatar alt={userName}  src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
         <Menu
           anchorEl={open}
           open={Boolean(open)}
           onClose={handleMenuClose}
-          sx={{ marginLeft: "-115px" }}             
+          sx={{ marginLeft: "-120px", marginTop: "1.5px" }}             
         >
           <MenuItem onClick={handleProfileModalOpen}>Profile</MenuItem>
           <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
