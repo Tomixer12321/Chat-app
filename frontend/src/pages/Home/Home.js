@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import Avatar from '@mui/material/Avatar';
+import { GetUser } from "../../components/GetUser";
 import httpRequest from "../../httpRequest";
 import userContext from "../../context/user-context";
 import AuthContext from "../../context/auth-context";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
+import TextField from "@mui/material/TextField";
+import Avatar from '@mui/material/Avatar';
 import "./Home.css";
 
 const Home = (props) => {
@@ -64,6 +64,7 @@ const Home = (props) => {
 
   return (
     <div className="gray-box">
+      <GetUser />
       <div
         className="box-wrapper"
         style={{ display: "flex", alignItems: "center" }}

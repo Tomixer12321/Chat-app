@@ -49,6 +49,12 @@ def get_current_user():
     })
 
 
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    user_data = [{'id': user.id, 'name': user.name} for user in users]
+    return jsonify(user_data)
+
 
 def init_db():
    with app.app_context():
