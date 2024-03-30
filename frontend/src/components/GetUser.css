@@ -1,0 +1,16 @@
+/* GetUser.css */
+.user-list {
+    margin-top: -30%; /* Posun všetkého hore */
+  }
+  
+  .user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .username {
+    font-size: 130%;
+    margin-left: 10px;
+  }
+  
