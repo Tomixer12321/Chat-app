@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import { GetUser } from "../../components/GetUser";
+import GetUser from "../../components/GetUser";
 import httpRequest from "../../httpRequest";
 import userContext from "../../context/user-context";
 import AuthContext from "../../context/auth-context";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import TextField from "@mui/material/TextField";
-import Avatar from '@mui/material/Avatar';
+import Avatar from "@mui/material/Avatar";
 import "./Home.css";
 
 const Home = (props) => {
   const userCtx = useContext(userContext);
   const [userName, setUserName] = useState();
-  const [email, setEmail] = useState(null);
   const [open, setOpen] = useState(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [showProfileOpen, setShowProfileOpen] = useState(false);
@@ -23,7 +22,6 @@ const Home = (props) => {
       try {
         const resp = await httpRequest.get("http://localhost:5000/@me");
         userCtx.setUserName(resp.data.name);
-        userCtx.setEmail(resp.data.email);
         setUserName(resp.data.name);
       } catch (error) {
         window.location.href = "/login";
@@ -31,7 +29,7 @@ const Home = (props) => {
       }
     })();
   }, [userCtx]);
-  
+
 
   const handleMenuOpen = (event) => {
     setOpen(event.currentTarget);
@@ -55,7 +53,6 @@ const Home = (props) => {
     setOpen(null);
   };
 
-
   const logoutUser = async () => {
     await httpRequest.post("//localhost:5000/logout");
     authContext.logout();
@@ -71,20 +68,23 @@ const Home = (props) => {
       >
         <div>
           <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
-            <Avatar alt={userName}  src="/static/images/avatar/2.jpg" />
+            <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
         <Menu
           anchorEl={open}
           open={Boolean(open)}
           onClose={handleMenuClose}
-          sx={{ marginLeft: "-120px", marginTop: "1.5px" }}             
+          sx={{ marginLeft: "-120px", marginTop: "1.5px" }}
         >
           <MenuItem onClick={handleProfileModalOpen}>Profile</MenuItem>
           <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
           <MenuItem onClick={logoutUser}>Log out</MenuItem>
         </Menu>
-        <ChangePasswordModal open={changePasswordOpen} onClose={handleClosePasswordModal} />
+        <ChangePasswordModal
+          open={changePasswordOpen}
+          onClose={handleClosePasswordModal}
+        />
       </div>
       <div className="content-wrapper">
         <TextField

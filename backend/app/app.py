@@ -33,7 +33,6 @@ with app.app_context():
         db.session.commit()
 
 
-
 @app.route("/@me")
 def get_current_user():
     user_id = session.get("user_id")
@@ -44,6 +43,7 @@ def get_current_user():
     user = User.query.get(user_id)
 
     return jsonify({
+        "id": user.id,
         "name": user.name,
         "email": user.email,
     })
