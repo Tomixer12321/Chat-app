@@ -49,11 +49,15 @@ def get_current_user():
     })
 
 
+from flask import request
+
 @app.route('/users', methods=['GET'])
 def get_users():
+    logged_in_user_id = session.get('user_id')
     users = User.query.all()
-    user_data = [{'id': user.id, 'name': user.name} for user in users]
+    user_data = [{'id': user.id, 'name': user.name} for user in users if user.id != logged_in_user_id]
     return jsonify(user_data)
+
 
 
 def init_db():

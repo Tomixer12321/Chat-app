@@ -7,30 +7,22 @@ import "./GetUser.css";
 
 const GetUser = () => {
   const [users, setUsers] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const [loggedInUserId, setLoggedInUserId] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpRequest.get("http://localhost:5000/@me");
-        setUserId(resp.data.id);
-      } catch (error) {
-        console.log("Not authenticated");
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await httpRequest.get("http://localhost:5000/users");
-        const filteredUsers = resp.data.filter((user) => user.id !== userId);
+        const respMe = await httpRequest.get("http://localhost:5000/@me");
+        setLoggedInUserId(respMe.data.id);
+        
+        const respUsers = await httpRequest.get("http://localhost:5000/users");
+        const filteredUsers = respUsers.data.filter((user) => user.id !== loggedInUserId);
         setUsers(filteredUsers);
       } catch (error) {
         console.error("Chyba pri načítaní používateľov:", error);
       }
     })();
-  }, [userId]);
+  }, [loggedInUserId]);
 
   return (
     <div className="user-list">
@@ -38,10 +30,7 @@ const GetUser = () => {
         {users.map((user) => (
           <ListItemButton key={user.id} className="user-item">
             <ListItemAvatar>
-              <Avatar
-                alt={user.name}
-                src="/static/images/avatar/2.jpg"
-              />
+              <Avatar alt={user.name} src="/static/images/avatar/2.jpg" />
             </ListItemAvatar>
             <span className="username">{user.name}</span>
           </ListItemButton>
