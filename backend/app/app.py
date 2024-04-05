@@ -49,8 +49,6 @@ def get_current_user():
     })
 
 
-from flask import request
-
 @app.route('/users', methods=['GET'])
 def get_users():
     logged_in_user_id = session.get('user_id')

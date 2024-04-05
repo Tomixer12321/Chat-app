@@ -14,9 +14,11 @@ const GetUser = () => {
       try {
         const respMe = await httpRequest.get("http://localhost:5000/@me");
         setLoggedInUserId(respMe.data.id);
-        
+
         const respUsers = await httpRequest.get("http://localhost:5000/users");
-        const filteredUsers = respUsers.data.filter((user) => user.id !== loggedInUserId);
+        const filteredUsers = respUsers.data.filter(
+          (user) => user.id !== loggedInUserId
+        );
         setUsers(filteredUsers);
       } catch (error) {
         console.error("Chyba pri načítaní používateľov:", error);

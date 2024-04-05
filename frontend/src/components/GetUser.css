@@ -1,16 +1,21 @@
-/* GetUser.css */
 .user-list {
-    margin-top: -30%; /* Posun všetkého hore */
-  }
-  
-  .user-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .username {
-    font-size: 130%;
-    margin-left: 10px;
-  }
-  
+  position: absolute;
+  top: 50%;
+  width: 23%;
+  height: 100%;
+  transform: translateY(-50%);
+  background-color: #212529;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.username {
+  font-size: 115%;
+  margin-left: 0px;
+}
