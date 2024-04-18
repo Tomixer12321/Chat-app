@@ -1,8 +1,8 @@
-from flask import Flask, session, jsonify
+from flask import Flask, session, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-from models import db, User
-from models import db
+from sqlalchemy import or_, and_
+from models import db, User, ChatRoom, user_chat_association_table
 from authentication import authentication_bp
 import sys
 import os
@@ -57,6 +57,28 @@ def get_users():
     return jsonify(user_data)
 
 
+@app.route("/start_chat", methods=["POST"])
+def create_or_get_chatroom():
+    user_id_1 = session.get('user_id')
+    target_user_id = request.json.get('user_id_2')
+    
+    initiator_id = user_id_1
+    target_id = target_user_id
+
+    if user_id_1 != target_user_id:
+        initiator_id, target_id = target_user_id, user_id_1
+    existing_chatroom = ChatRoom.query.filter(or_(
+        and_(ChatRoom.name1 == initiator_id, ChatRoom.name2 == target_id),
+        and_(ChatRoom.name1 == target_id, ChatRoom.name2 == initiator_id)
+    )).first()
+
+    if existing_chatroom:
+        return jsonify({"chatroom_id": existing_chatroom.id})
+    chatroom = ChatRoom(name1=initiator_id, name2=target_id, description="Chatroom for users")
+    db.session.add(chatroom)
+    db.session.commit()
+
+    return jsonify({"chatroom_id": chatroom.id})
 
 def init_db():
    with app.app_context():

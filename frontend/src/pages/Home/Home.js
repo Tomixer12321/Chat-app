@@ -1,3 +1,4 @@
+// Home.js (časť 2)
 import { useContext, useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import GetUser from "../../components/GetUser";
@@ -58,10 +59,20 @@ const Home = (props) => {
     window.location.href = "/login";
   };
 
+  const startChat = async (userId) => {
+    try {
+      const resp = await httpRequest.post("http://localhost:5000/start_chat", { user_id_1: userCtx.userId, user_id_2: userId });
+      console.log("Chatroom ID:", resp.data.chatroom_id);
+      // Tu aktualizujte stav aplikácie a zobrazte chat na rovnakej stránke
+    } catch (error) {
+      console.error("Chyba při zahájení chatu:", error);
+    }
+  };
+  
   return (
     <div className="black-background">
       <div className="gray-box">
-        <GetUser />
+        <GetUser onStartChat={startChat} />
         <div
           className="box-wrapper"
           style={{ display: "flex", alignItems: "center" }}

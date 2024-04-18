@@ -1,3 +1,4 @@
+// GetUser.js
 import { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
@@ -5,7 +6,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import httpRequest from "../httpRequest";
 import "./GetUser.css";
 
-const GetUser = () => {
+const GetUser = ({ onStartChat }) => {
   const [users, setUsers] = useState([]);
   const [loggedInUserId, setLoggedInUserId] = useState(null);
 
@@ -26,11 +27,25 @@ const GetUser = () => {
     })();
   }, [loggedInUserId]);
 
+  const handleStartChat = (userId) => {
+    onStartChat(userId);
+    console.log(userId) // Zavoláme funkciu pre začatie chatu s ID vybraného užívateľa
+  };
+
   return (
     <div className="user-list">
       <ul>
         {users.map((user) => (
-          <ListItemButton key={user.id} className="user-item">
+          <ListItemButton
+            key={user.id}
+            className="user-item"
+            onClick={() => handleStartChat(user.id)} // Zavoláme funkciu pre začatie chatu pri kliknutí na užívateľa
+            sx={{
+              "&.MuiButtonBase-root:hover": {
+                backgroundColor: "#494949",
+              },
+            }}
+          >
             <ListItemAvatar>
               <Avatar alt={user.name} src="/static/images/avatar/2.jpg" />
             </ListItemAvatar>
