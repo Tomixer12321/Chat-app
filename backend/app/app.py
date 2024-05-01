@@ -2,7 +2,7 @@ from flask import Flask, session, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from sqlalchemy import or_, and_
-from models import db, User, ChatRoom, user_chat_association_table
+from models import db, User, ChatRoom, Message
 from authentication import authentication_bp
 import sys
 import os
@@ -79,6 +79,26 @@ def create_or_get_chatroom():
     db.session.commit()
 
     return jsonify({"chatroom_id": chatroom.id})
+
+
+@app.route("/send_message", methods=["POST"])
+def send_message():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    recipient_id = request.json.get("recipient_id")
+    content = request.json.get("content")
+
+    if not (recipient_id and content):
+        return jsonify({"error": "Invalid data"}), 400
+
+    # Vytvor správu a ulož ju do databázy
+    message = Message(sender_id=user_id, recipient_id=recipient_id, content=content)
+    db.session.add(message)
+    db.session.commit()
+
+    return jsonify({"message_id": message.id})
 
 def init_db():
    with app.app_context():
