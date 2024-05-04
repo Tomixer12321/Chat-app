@@ -90,6 +90,7 @@ def send_message():
     recipient_id = request.json.get("recipient_id")
     content = request.json.get("content")
 
+
     if not (recipient_id and content):
         return jsonify({"error": "Invalid data"}), 400
 

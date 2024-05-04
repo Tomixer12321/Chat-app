@@ -31,4 +31,3 @@ class Message(db.Model):
     sender_id = db.Column(db.String(32), db.ForeignKey("user.id"))
     recipient_id = db.Column(db.String(32), db.ForeignKey("user.id"))
     content = db.Column(db.String(1000))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

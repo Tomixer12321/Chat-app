@@ -1,20 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import GetUser from "../components/GetUser";
 import httpRequest from "../httpRequest";
 import userContext from "../context/user-context";
 import AuthContext from "../context/auth-context";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
+import "./ChatRoom.css";
 
-const ChatRoom = () => {
+const ChatRoom = ({ chatRoomId, userId }) => {
   const userCtx = useContext(userContext);
   const [userName, setUserName] = useState();
   const [open, setOpen] = useState(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [showProfileOpen, setShowProfileOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [content, setContent] = useState("");
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
@@ -30,17 +30,18 @@ const ChatRoom = () => {
     })();
   }, [userCtx]);
 
-  const sendMessage = async (userId) => {
+  const sendMessage = async () => {
     try {
-      const resp = await httpRequest.post(
-        "http://localhost:5000/send_message",
-        { recipient_id: userCtx.userId, content: message }
-      );
+      const resp = await httpRequest.post("http://localhost:5000/send_message", {
+        recipient_id: userId,
+        content: content 
+      });
       console.log("Správa odoslaná:", resp.data);
     } catch (error) {
       console.error("Chyba pri odosielaní správy:", error);
     }
   };
+
 
   const handleMenuOpen = (event) => {
     setOpen(event.currentTarget);
@@ -70,20 +71,8 @@ const ChatRoom = () => {
     window.location.href = "/login";
   };
 
-  const startChat = async (userId) => {
-    try {
-      const resp = await httpRequest.post("http://localhost:5000/start_chat", {
-        user_id_1: userCtx.userId,
-        user_id_2: userId,
-      });
-    } catch (error) {
-      console.error("Chyba při zahájení chatu:", error);
-    }
-  };
-
   return (
     <div>
-      <GetUser onStartChat={startChat} />
       <div
         className="box-wrapper"
         style={{ display: "flex", alignItems: "center" }}
@@ -112,8 +101,8 @@ const ChatRoom = () => {
         <TextField
           label="write a message"
           variant="filled"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           sx={{
             width: "99%",
             color: "#f8f9fa",
