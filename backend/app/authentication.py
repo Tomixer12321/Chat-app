@@ -5,6 +5,7 @@ from models import db, User
 authentication_bp = Blueprint('authentication', __name__)
 bcrypt = Bcrypt()
 
+
 def hash_password(password):
     return bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -30,7 +31,6 @@ def register():
         db.session.commit()
 
         session["user_id"] = new_user.id
-    
 
         return jsonify({
             "id": new_user.id,
@@ -61,6 +61,7 @@ def login_user():
 def logout_user():
     session.pop("user_id", None)
     return jsonify({"success": True}), 204
+
 
 @authentication_bp.route("/change-password", methods=["POST"])
 def change_password():
