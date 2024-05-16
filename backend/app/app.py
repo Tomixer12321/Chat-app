@@ -92,19 +92,49 @@ def send_message():
         return jsonify({"error": "Unauthorized"}), 401
 
     recipient_id = request.json.get("recipient_id")
+    chatroom_id = request.json.get("chatroom_id")
     content = request.json.get("content")
 
-    if not (recipient_id and content):
+    if not (recipient_id and content and chatroom_id):
         return jsonify({"error": "Invalid data"}), 400
 
-    # Vytvor správu a ulož ju do databázy
-    message = Message(sender_id=user_id,
-                      recipient_id=recipient_id, content=content)
+    message = Message(sender_id=user_id, recipient_id=recipient_id, content=content, chatroom_id=chatroom_id)
     db.session.add(message)
     db.session.commit()
-
     return jsonify({"message_id": message.id})
 
+@app.route('/messages', methods=['GET'])
+def get_messages():
+    user_id = session.get("user_id")
+    chatroom_id = request.args.get("chatroom_id")
+    target_user_id = request.args.get("target_user_id")
+
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not (chatroom_id and target_user_id):
+        return jsonify({"error": "Invalid data"}), 400
+
+    messages = Message.query.filter(
+        Message.chatroom_id == chatroom_id,
+        or_(
+            and_(Message.sender_id == user_id, Message.recipient_id == target_user_id),
+            and_(Message.sender_id == target_user_id, Message.recipient_id == user_id)
+        )
+    ).all()
+    
+    messages_data = [
+        {
+            'id': message.id,
+            'sender_id': message.sender_id,
+            'recipient_id': message.recipient_id,
+            'chatroom_id': message.chatroom_id,
+            'content': message.content
+        }
+        for message in messages
+    ]
+
+    return jsonify(messages_data), 200
 
 def init_db():
     with app.app_context():

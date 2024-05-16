@@ -15,7 +15,10 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [showProfileOpen, setShowProfileOpen] = useState(false);
   const [content, setContent] = useState("");
+  const [messages, setMessages] = useState([]);
   const authContext = useContext(AuthContext);
+
+
 
   useEffect(() => {
     (async () => {
@@ -30,18 +33,34 @@ const ChatRoom = ({ chatRoomId, userId }) => {
     })();
   }, [userCtx]);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const resp = await httpRequest.get(`http://localhost:5000/messages?chatroom_id=${chatRoomId}&target_user_id=${userId}`);
+        setMessages(resp.data);
+        console.log(resp.data)
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+  
+    fetchMessages();
+  }, [chatRoomId, userId]);
+
   const sendMessage = async () => {
     try {
-      const resp = await httpRequest.post("http://localhost:5000/send_message", {
-        recipient_id: userId,
-        content: content 
-      });
-      console.log("Správa odoslaná:", resp.data);
+      const resp = await httpRequest.post(
+        "http://localhost:5000/send_message",
+        {
+          recipient_id: userId,
+          content: content,
+          chatroom_id: chatRoomId,
+        }
+      );
     } catch (error) {
       console.error("Chyba pri odosielaní správy:", error);
     }
   };
-
 
   const handleMenuOpen = (event) => {
     setOpen(event.currentTarget);
