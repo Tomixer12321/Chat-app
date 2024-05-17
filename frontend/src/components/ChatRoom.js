@@ -18,8 +18,6 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const [messages, setMessages] = useState([]);
   const authContext = useContext(AuthContext);
 
-
-
   useEffect(() => {
     (async () => {
       try {
@@ -47,7 +45,8 @@ const ChatRoom = ({ chatRoomId, userId }) => {
     fetchMessages();
   }, [chatRoomId, userId]);
 
-  const sendMessage = async () => {
+  const sendMessage = async (event) => {
+    event.preventDefault();
     try {
       const resp = await httpRequest.post(
         "http://localhost:5000/send_message",
@@ -57,6 +56,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
           chatroom_id: chatRoomId,
         }
       );
+      setContent(""); // Vyprázdni textové pole po úspešnom odoslaní správy
     } catch (error) {
       console.error("Chyba pri odosielaní správy:", error);
     }
@@ -117,39 +117,41 @@ const ChatRoom = ({ chatRoomId, userId }) => {
         />
       </div>
       <div className="content-wrapper">
-        <TextField
-          label="write a message"
-          variant="filled"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          sx={{
-            width: "99%",
-            color: "#f8f9fa",
-            "& .MuiInputLabel-root": {
+        <form onSubmit={sendMessage}>
+          <TextField
+            label="write a message"
+            variant="filled"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            sx={{
+              width: "99%",
               color: "#f8f9fa",
-            },
-            "& .MuiFilledInput-root": {
-              backgroundColor: "#212529",
-            },
-            "& .MuiFilledInput-underline:before": {
-              borderBottomColor: "#f8f9fa",
-            },
-            "& .MuiFilledInput-underline:hover:before": {
-              borderBottomColor: "#f8f9fa",
-            },
-            "& .MuiFilledInput-underline:after": {
-              borderBottomColor: "#f8f9fa",
-            },
-            "& .MuiFilledInput-input": {
-              caretColor: "#f8f9fa",
-              color: "#f8f9fa",
-            },
-            "& .MuiInputBase-input::placeholder": {
-              color: "#f8f9fa",
-            },
-          }}
-        />
-        <button onClick={sendMessage}>Send</button>
+              "& .MuiInputLabel-root": {
+                color: "#f8f9fa",
+              },
+              "& .MuiFilledInput-root": {
+                backgroundColor: "#212529",
+              },
+              "& .MuiFilledInput-underline:before": {
+                borderBottomColor: "#f8f9fa",
+              },
+              "& .MuiFilledInput-underline:hover:before": {
+                borderBottomColor: "#f8f9fa",
+              },
+              "& .MuiFilledInput-underline:after": {
+                borderBottomColor: "#f8f9fa",
+              },
+              "& .MuiFilledInput-input": {
+                caretColor: "#f8f9fa",
+                color: "#f8f9fa",
+              },
+              "& .MuiInputBase-input::placeholder": {
+                color: "#f8f9fa",
+              },
+            }}
+          />
+          <button type="submit">Send</button>
+        </form>
       </div>
     </div>
   );

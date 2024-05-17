@@ -8,6 +8,7 @@ import "./GetUser.css";
 const GetUser = ({ onStartChat }) => {
   const [users, setUsers] = useState([]);
   const [loggedInUserId, setLoggedInUserId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -27,6 +28,7 @@ const GetUser = ({ onStartChat }) => {
   }, [loggedInUserId]);
 
   const handleStartChat = (userId) => {
+    setSelectedUserId(userId);
     onStartChat(userId);
   };
 
@@ -36,7 +38,7 @@ const GetUser = ({ onStartChat }) => {
         {users.map((user) => (
           <ListItemButton
             key={user.id}
-            className="user-item"
+            className={`user-item ${selectedUserId === user.id ? "selected" : ""}`}
             onClick={() => handleStartChat(user.id)}
             sx={{
               "&.MuiButtonBase-root:hover": {
