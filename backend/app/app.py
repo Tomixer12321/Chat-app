@@ -1,6 +1,7 @@
 from flask import Flask, session, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit, join_room
 from sqlalchemy import or_, and_
 from models import db, User, ChatRoom, Message
 from authentication import authentication_bp
@@ -8,7 +9,8 @@ import sys
 import os
 
 app = Flask(__name__)
-bcrypt = Bcrypt()
+bcrypt = Bcrypt(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app, supports_credentials=True)
@@ -101,6 +103,15 @@ def send_message():
     message = Message(sender_id=user_id, recipient_id=recipient_id, content=content, chatroom_id=chatroom_id)
     db.session.add(message)
     db.session.commit()
+
+    socketio.emit('receive_message', {
+        'sender_id': user_id,
+        'recipient_id': recipient_id,
+        'chatroom_id': chatroom_id,
+        'content': content,
+        'sender': User.query.get(user_id).name
+    }, room=chatroom_id)
+
     return jsonify({"message_id": message.id})
 
 @app.route('/messages', methods=['GET'])
@@ -136,6 +147,20 @@ def get_messages():
 
     return jsonify(messages_data), 200
 
+@socketio.on('connect')
+def test_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+
+@socketio.on('join')
+def on_join(data):
+    chatroom_id = data['chatroom_id']
+    join_room(chatroom_id)
+    print(f"User joined chatroom {chatroom_id}")
+
 def init_db():
     with app.app_context():
         db.create_all()
@@ -146,7 +171,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         command = sys.argv[1]
         if command == "start":
-            app.run(debug=True)
+            socketio.run(app, debug=True)
         elif command == "init_db":
             init_db()
     else:

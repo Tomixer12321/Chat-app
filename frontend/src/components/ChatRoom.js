@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
+import { io } from 'socket.io-client';
 import httpRequest from "../httpRequest";
 import userContext from "../context/user-context";
 import AuthContext from "../context/auth-context";
@@ -7,6 +8,8 @@ import ChangePasswordModal from "../components/ChangePasswordModal";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import "./ChatRoom.css";
+
+const SOCKET_SERVER_URL = "http://localhost:3000";  // Uistite sa, že port je správny
 
 const ChatRoom = ({ chatRoomId, userId }) => {
   const userCtx = useContext(userContext);
@@ -17,6 +20,21 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const [content, setContent] = useState("");
   const [messages, setMessages] = useState([]);
   const authContext = useContext(AuthContext);
+
+  const socket = io(SOCKET_SERVER_URL);
+
+  useEffect(() => {
+    socket.emit('join', { chatroom_id: chatRoomId });
+
+    socket.on('receive_message', (message) => {
+      console.log('Message received:', message);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [chatRoomId]);
 
   useEffect(() => {
     (async () => {
@@ -36,12 +54,11 @@ const ChatRoom = ({ chatRoomId, userId }) => {
       try {
         const resp = await httpRequest.get(`http://localhost:5000/messages?chatroom_id=${chatRoomId}&target_user_id=${userId}`);
         setMessages(resp.data);
-        console.log(resp.data)
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
-  
+
     fetchMessages();
   }, [chatRoomId, userId]);
 
