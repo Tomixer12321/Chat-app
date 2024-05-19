@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 import httpRequest from "../httpRequest";
 import userContext from "../context/user-context";
 import AuthContext from "../context/auth-context";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
 import "./ChatRoom.css";
 
 const SOCKET_SERVER_URL = "http://localhost:5000";
@@ -24,10 +25,10 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const socket = io(SOCKET_SERVER_URL);
 
   useEffect(() => {
-    socket.emit('join', { chatroom_id: chatRoomId });
+    socket.emit("join", { chatroom_id: chatRoomId });
 
-    socket.on('receive_message', (message) => {
-      console.log('Message received:', message);
+    socket.on("receive_message", (message) => {
+      console.log("Message received:", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -52,7 +53,9 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const resp = await httpRequest.get(`http://localhost:5000/messages?chatroom_id=${chatRoomId}&target_user_id=${userId}`);
+        const resp = await httpRequest.get(
+          `http://localhost:5000/messages?chatroom_id=${chatRoomId}&target_user_id=${userId}`
+        );
         setMessages(resp.data);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -106,6 +109,8 @@ const ChatRoom = ({ chatRoomId, userId }) => {
     authContext.logout();
     window.location.href = "/login";
   };
+
+  console.log(messages)
 
   return (
     <div>
@@ -167,7 +172,9 @@ const ChatRoom = ({ chatRoomId, userId }) => {
               },
             }}
           />
-          <button type="submit">Send</button>
+          <Button type="submit" variant="contained" color="success" sx={{ marginLeft: 100.2, marginTop: -10,}}>
+            send
+          </Button>
         </form>
       </div>
     </div>

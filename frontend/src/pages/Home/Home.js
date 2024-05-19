@@ -28,7 +28,6 @@ const Home = () => {
       <div className="gray-box">
       <ChatRoom chatRoomId={chatRoomId} userId={userId} />
         <GetUser onStartChat={startChat} />
-        <ChatRoom />
       </div>
     </div>
   );

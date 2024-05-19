@@ -100,19 +100,17 @@ def send_message():
     if not (recipient_id and content and chatroom_id):
         return jsonify({"error": "Invalid data"}), 400
 
-    message = Message(sender_id=user_id, recipient_id=recipient_id, content=content, chatroom_id=chatroom_id)
+    message = Message(sender_id=user_id, recipient_id=recipient_id,
+                      content=content, chatroom_id=chatroom_id)
     db.session.add(message)
     db.session.commit()
 
     socketio.emit('receive_message', {
-        'sender_id': user_id,
-        'recipient_id': recipient_id,
-        'chatroom_id': chatroom_id,
         'content': content,
-        'sender': User.query.get(user_id).name
     }, room=chatroom_id)
 
     return jsonify({"message_id": message.id})
+
 
 @app.route('/messages', methods=['GET'])
 def get_messages():
@@ -129,17 +127,15 @@ def get_messages():
     messages = Message.query.filter(
         Message.chatroom_id == chatroom_id,
         or_(
-            and_(Message.sender_id == user_id, Message.recipient_id == target_user_id),
-            and_(Message.sender_id == target_user_id, Message.recipient_id == user_id)
+            and_(Message.sender_id == user_id,
+                 Message.recipient_id == target_user_id),
+            and_(Message.sender_id == target_user_id,
+                 Message.recipient_id == user_id)
         )
     ).all()
-    
+
     messages_data = [
         {
-            'id': message.id,
-            'sender_id': message.sender_id,
-            'recipient_id': message.recipient_id,
-            'chatroom_id': message.chatroom_id,
             'content': message.content
         }
         for message in messages
@@ -147,19 +143,23 @@ def get_messages():
 
     return jsonify(messages_data), 200
 
+
 @socketio.on('connect')
 def test_connect():
     print('Client connected')
 
+
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
+
 
 @socketio.on('join')
 def on_join(data):
     chatroom_id = data['chatroom_id']
     join_room(chatroom_id)
     print(f"User joined chatroom {chatroom_id}")
+
 
 def init_db():
     with app.app_context():
