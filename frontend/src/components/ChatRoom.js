@@ -9,7 +9,7 @@ import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import "./ChatRoom.css";
 
-const SOCKET_SERVER_URL = "http://localhost:3000";  // Uistite sa, že port je správny
+const SOCKET_SERVER_URL = "http://localhost:5000";
 
 const ChatRoom = ({ chatRoomId, userId }) => {
   const userCtx = useContext(userContext);
@@ -73,7 +73,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
           chatroom_id: chatRoomId,
         }
       );
-      setContent(""); // Vyprázdni textové pole po úspešnom odoslaní správy
+      setContent("");
     } catch (error) {
       console.error("Chyba pri odosielaní správy:", error);
     }
