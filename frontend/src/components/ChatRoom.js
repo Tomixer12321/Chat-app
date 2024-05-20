@@ -105,15 +105,15 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   };
 
   const logoutUser = async () => {
-    await httpRequest.post("//localhost:5000/logout");
+    await httpRequest.post("//localhost:5000/logout"); 
     authContext.logout();
     window.location.href = "/login";
   };
 
-  console.log(messages)
+  console.log(messages);
 
   return (
-    <div>
+    <div className="">
       <div
         className="box-wrapper"
         style={{ display: "flex", alignItems: "center" }}
@@ -138,15 +138,25 @@ const ChatRoom = ({ chatRoomId, userId }) => {
           onClose={handleClosePasswordModal}
         />
       </div>
+      <div className="messages">
+        {messages.map((message, index) => (
+          <div key={index} className="message">
+            {message.content}
+          </div>
+        ))}
+      </div>
       <div className="content-wrapper">
-        <form onSubmit={sendMessage}>
+        <form
+          onSubmit={sendMessage}
+          style={{ display: "flex", alignItems: "center" }}
+        >
           <TextField
             label="write a message"
             variant="filled"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             sx={{
-              width: "99%",
+              width: "90%",
               color: "#f8f9fa",
               "& .MuiInputLabel-root": {
                 color: "#f8f9fa",
@@ -172,7 +182,12 @@ const ChatRoom = ({ chatRoomId, userId }) => {
               },
             }}
           />
-          <Button type="submit" variant="contained" color="success" sx={{ marginLeft: 100.2, marginTop: -10,}}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="success"
+            sx={{ marginLeft: 2 }}
+          >
             send
           </Button>
         </form>
