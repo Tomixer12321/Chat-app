@@ -1,6 +1,5 @@
-
 .gray-box {
-  position: fixed;
+  position: absolute;
   top: 40px;
   left: 50%;
   transform: translateX(-50%);
@@ -16,7 +15,6 @@
 
 .box-wrapper {
   position: absolute;
-  top: 0.5%;
   right: 0.5%;
 }
 

@@ -1,12 +1,30 @@
+.message-box {
+  position: relative;
+  margin-top: -350px;
+  margin-bottom: -250px;
+}
+
+.messages {
+  max-height:60vh; /* Set a maximum height for the messages container */
+  overflow-y: auto; /* Allow vertical scrolling if the content exceeds the max height */
+  padding-bottom: 180px; /* Add some padding for better appearance */
+  margin-left: 25%;
+}
+
 .content-wrapper {
-    margin-left: 24%;
-    margin-right: 70px;
-    margin-top: 400px;
-    z-index: 3;
-  }
-  .message{
-    margin-left: 24%;
-    margin-bottom: 25px;
-    padding: 4px;
-    z-index: -1;
-  }
+  position: fixed; /* Fix the position of the input box */
+  bottom: 0; /* Position it at the bottom */
+  left: 24%; /* Adjust the left position to match the messages */
+  width: 52%; /* Set the width to cover the remaining area */
+  z-index: 3;
+  background-color: #343a40; /* Match background color */
+  padding: 10px; /* Add some padding for better appearance */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow for better visibility */
+}
+
+.message {
+  margin-left: 0; /* Adjusted to align with the container */
+  margin-bottom: 25px;
+  padding: 4px;
+  z-index: 1;
+}

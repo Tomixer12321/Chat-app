@@ -113,13 +113,13 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   console.log(messages);
 
   return (
-    <div className="">
+    <div className="message-box">
       <div
         className="box-wrapper"
         style={{ display: "flex", alignItems: "center" }}
       >
         <div>
-          <IconButton sx={{ p: 0.1, color: "gray" }} onClick={handleMenuOpen}>
+          <IconButton sx={{paddingRight: 2 ,paddingTop: 1 ,color: "gray" }} onClick={handleMenuOpen}>
             <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
