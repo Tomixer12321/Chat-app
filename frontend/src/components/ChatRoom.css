@@ -5,25 +5,25 @@
 }
 
 .messages {
-  max-height:60vh; /* Set a maximum height for the messages container */
-  overflow-y: auto; /* Allow vertical scrolling if the content exceeds the max height */
-  padding-bottom: 180px; /* Add some padding for better appearance */
+  max-height:60vh;
+  overflow-y: auto;
+  padding-bottom: 180px;
   margin-left: 25%;
 }
 
 .content-wrapper {
-  position: fixed; /* Fix the position of the input box */
-  bottom: 0; /* Position it at the bottom */
-  left: 24%; /* Adjust the left position to match the messages */
-  width: 52%; /* Set the width to cover the remaining area */
+  position: fixed;
+  bottom: 0;
+  left: 24%;
+  width: 52%;
   z-index: 3;
-  background-color: #343a40; /* Match background color */
-  padding: 10px; /* Add some padding for better appearance */
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow for better visibility */
+  background-color: #343a40;
+  padding: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .message {
-  margin-left: 0; /* Adjusted to align with the container */
+  margin-left: 0;
   margin-bottom: 25px;
   padding: 4px;
   z-index: 1;
