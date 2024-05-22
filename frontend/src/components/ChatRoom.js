@@ -15,6 +15,7 @@ const SOCKET_SERVER_URL = "http://localhost:5000";
 const ChatRoom = ({ chatRoomId, userId }) => {
   const userCtx = useContext(userContext);
   const [userName, setUserName] = useState();
+  const [activeUserId, setActiveUserId] = useState();
   const [open, setOpen] = useState(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [showProfileOpen, setShowProfileOpen] = useState(false);
@@ -43,6 +44,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
         const resp = await httpRequest.get("http://localhost:5000/@me");
         userCtx.setUserName(resp.data.name);
         setUserName(resp.data.name);
+        setActiveUserId(resp.data.id)
       } catch (error) {
         window.location.href = "/login";
         console.log("Not authenticated");
@@ -68,7 +70,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const sendMessage = async (event) => {
     event.preventDefault();
     try {
-      const resp = await httpRequest.post(
+      await httpRequest.post(
         "http://localhost:5000/send_message",
         {
           recipient_id: userId,
@@ -105,12 +107,12 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   };
 
   const logoutUser = async () => {
-    await httpRequest.post("//localhost:5000/logout"); 
+    await httpRequest.post("//localhost:5000/logout");
     authContext.logout();
     window.location.href = "/login";
   };
 
-  console.log(messages);
+
 
   return (
     <div className="message-box">
@@ -119,7 +121,10 @@ const ChatRoom = ({ chatRoomId, userId }) => {
         style={{ display: "flex", alignItems: "center" }}
       >
         <div>
-          <IconButton sx={{paddingRight: 2 ,paddingTop: 1 ,color: "gray" }} onClick={handleMenuOpen}>
+          <IconButton
+            sx={{ paddingRight: 2, paddingTop: 1, color: "gray" }}
+            onClick={handleMenuOpen}
+          >
             <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
@@ -140,7 +145,10 @@ const ChatRoom = ({ chatRoomId, userId }) => {
       </div>
       <div className="messages">
         {messages.map((message, index) => (
-          <div key={index} className="message">
+          <div
+            key={index}
+            className={`message ${message.sender_id === activeUserId ? "my-message" : "other-message"}`}
+          >
             {message.content}
           </div>
         ))}

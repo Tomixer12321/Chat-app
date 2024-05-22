@@ -136,7 +136,8 @@ def get_messages():
 
     messages_data = [
         {
-            'content': message.content
+            'content': message.content,
+            'sender_id': message.sender_id
         }
         for message in messages
     ]

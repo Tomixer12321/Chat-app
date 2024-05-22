@@ -14,12 +14,13 @@
 .content-wrapper {
   position: fixed;
   bottom: 0;
-  left: 24%;
-  width: 52%;
+  left: 23%;
+  width: 75%;
   z-index: 3;
   background-color: #343a40;
   padding: 10px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  border-bottom-right-radius: 10px;
 }
 
 .message {
@@ -27,4 +28,12 @@
   margin-bottom: 25px;
   padding: 4px;
   z-index: 1;
+}
+
+.my-message{
+  margin-left: 0px;
+}
+
+.other-message{
+  margin-left: 570px;
 }
