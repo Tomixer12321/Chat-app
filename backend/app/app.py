@@ -105,11 +105,19 @@ def send_message():
     db.session.add(message)
     db.session.commit()
 
-    socketio.emit('receive_message', {
-        'content': content,
-    }, room=chatroom_id)
+    message_data = {
+        "id": message.id,
+        "sender_id": message.sender_id,
+        "recipient_id": message.recipient_id,
+        "content": message.content,
+        "chatroom_id": message.chatroom_id,
+    }
+
+    socketio.emit('receive_message', message_data, room=chatroom_id)
 
     return jsonify({"message_id": message.id})
+
+
 
 
 @app.route('/messages', methods=['GET'])

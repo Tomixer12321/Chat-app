@@ -29,8 +29,15 @@ const ChatRoom = ({ chatRoomId, userId }) => {
     socket.emit("join", { chatroom_id: chatRoomId });
 
     socket.on("receive_message", (message) => {
-      console.log("Message received:", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => {
+        const messageExists = prevMessages.some(
+          (msg) => msg.id === message.id
+        );
+        if (!messageExists) {
+          return [...prevMessages, message];
+        }
+        return prevMessages;
+      });
     });
 
     return () => {
@@ -44,7 +51,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
         const resp = await httpRequest.get("http://localhost:5000/@me");
         userCtx.setUserName(resp.data.name);
         setUserName(resp.data.name);
-        setActiveUserId(resp.data.id)
+        setActiveUserId(resp.data.id);
       } catch (error) {
         window.location.href = "/login";
         console.log("Not authenticated");
@@ -70,7 +77,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const sendMessage = async (event) => {
     event.preventDefault();
     try {
-      await httpRequest.post(
+      const response = await httpRequest.post(
         "http://localhost:5000/send_message",
         {
           recipient_id: userId,
@@ -112,19 +119,11 @@ const ChatRoom = ({ chatRoomId, userId }) => {
     window.location.href = "/login";
   };
 
-
-
   return (
     <div className="message-box">
-      <div
-        className="box-wrapper"
-        style={{ display: "flex", alignItems: "center" }}
-      >
+      <div className="box-wrapper" style={{ display: "flex", alignItems: "center" }}>
         <div>
-          <IconButton
-            sx={{ paddingRight: 2, paddingTop: 1, color: "gray" }}
-            onClick={handleMenuOpen}
-          >
+          <IconButton sx={{ paddingRight: 2, paddingTop: 1, color: "gray" }} onClick={handleMenuOpen}>
             <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
@@ -138,10 +137,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
           <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
           <MenuItem onClick={logoutUser}>Log out</MenuItem>
         </Menu>
-        <ChangePasswordModal
-          open={changePasswordOpen}
-          onClose={handleClosePasswordModal}
-        />
+        <ChangePasswordModal open={changePasswordOpen} onClose={handleClosePasswordModal} />
       </div>
       <div className="messages">
         {messages.map((message, index) => (
@@ -154,10 +150,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
         ))}
       </div>
       <div className="content-wrapper">
-        <form
-          onSubmit={sendMessage}
-          style={{ display: "flex", alignItems: "center" }}
-        >
+        <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
           <TextField
             label="write a message"
             variant="filled"
@@ -190,12 +183,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
               },
             }}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="success"
-            sx={{ marginLeft: 2 }}
-          >
+          <Button type="submit" variant="contained" color="success" sx={{ marginLeft: 2 }}>
             send
           </Button>
         </form>
