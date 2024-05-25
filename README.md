@@ -9,7 +9,7 @@
 - **Real-time Chat:** Send and receive messages instantly between users.
 - **Change Password:** Option to change the password for increased account security.
 
-## Installation frontend
+## Frontend Setup
 
 1. Clone this repository:
    ```bash
@@ -31,7 +31,7 @@
    npm start
    ```
 
-## Installation backend
+## Backend Setup
 
 1. Navigate to the backend directory:
 
