@@ -56,7 +56,7 @@
 
 4. Initialize the database:
    ```bash
-   pip install -r requirements.txt
+   python app/app.py init_db
    ```
 
 ## Usage
