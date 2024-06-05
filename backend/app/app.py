@@ -19,8 +19,6 @@ app.register_blueprint(authentication_bp)
 
 os.environ['CONFIG'] = "/login/backend/config.py"
 
-if "CONFIG" in os.environ:
-    app.config.from_envvar("CONFIG")
 
 db.init_app(app)
 
@@ -35,7 +33,7 @@ with app.app_context():
                           password=hashed_password)
         db.session.add(admin_user)
         db.session.commit()
-
+        
 
 @app.route("/@me")
 def get_current_user():

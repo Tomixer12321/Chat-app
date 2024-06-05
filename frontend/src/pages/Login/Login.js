@@ -39,7 +39,6 @@ const Login = () => {
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
-    console.log(event.currentTarget)
     try {
       await httpRequest.post("http://localhost:5000/login", {
         email,
