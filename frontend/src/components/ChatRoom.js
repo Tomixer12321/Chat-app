@@ -10,7 +10,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import "./ChatRoom.css";
 
-const SOCKET_SERVER_URL = "http://localhost:5000";
+const SERVER_URL = "http://localhost:5000";
 
 const ChatRoom = ({ chatRoomId, userId }) => {
   const userCtx = useContext(userContext);
@@ -18,27 +18,25 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   const [activeUserId, setActiveUserId] = useState();
   const [open, setOpen] = useState(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
-  const [showProfileOpen, setShowProfileOpen] = useState(false);
+  const [showProfileOpen, setShowProfileOpen] = useState(false); 
   const [content, setContent] = useState("");
   const [messages, setMessages] = useState([]);
   const authContext = useContext(AuthContext);
 
-  const socket = io(SOCKET_SERVER_URL);
-
   useEffect(() => {
+    const socket = io(SERVER_URL, { transports: ["websocket"] });
+
     socket.emit("join", { chatroom_id: chatRoomId });
 
     socket.on("receive_message", (message) => {
       setMessages((prevMessages) => {
-        const messageExists = prevMessages.some(
-          (msg) => msg.id === message.id
-        );
+        const messageExists = prevMessages.some((msg) => msg.id === message.id);
         if (!messageExists) {
           return [...prevMessages, message];
         }
         return prevMessages;
       });
-    });
+    }); 
 
     return () => {
       socket.disconnect();
@@ -48,7 +46,7 @@ const ChatRoom = ({ chatRoomId, userId }) => {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await httpRequest.get("http://localhost:5000/@me");
+        const resp = await httpRequest.get(`${SERVER_URL}/@me`);
         userCtx.setUserName(resp.data.name);
         setUserName(resp.data.name);
         setActiveUserId(resp.data.id);
@@ -121,9 +119,15 @@ const ChatRoom = ({ chatRoomId, userId }) => {
 
   return (
     <div className="message-box">
-      <div className="box-wrapper" style={{ display: "flex", alignItems: "center" }}>
+      <div
+        className="box-wrapper"
+        style={{ display: "flex", alignItems: "center" }}
+      >
         <div>
-          <IconButton sx={{ paddingRight: 2, paddingTop: 1, color: "gray" }} onClick={handleMenuOpen}>
+          <IconButton
+            sx={{ paddingRight: 2, paddingTop: 1, color: "gray" }}
+            onClick={handleMenuOpen}
+          >
             <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
           </IconButton>
         </div>
@@ -137,20 +141,30 @@ const ChatRoom = ({ chatRoomId, userId }) => {
           <MenuItem onClick={handlePasswordModalOpen}>Change password</MenuItem>
           <MenuItem onClick={logoutUser}>Log out</MenuItem>
         </Menu>
-        <ChangePasswordModal open={changePasswordOpen} onClose={handleClosePasswordModal} />
+        <ChangePasswordModal
+          open={changePasswordOpen}
+          onClose={handleClosePasswordModal}
+        />
       </div>
       <div className="messages">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`message ${message.sender_id === activeUserId ? "my-message" : "other-message"}`}
+            className={`message ${
+              message.sender_id === activeUserId
+                ? "my-message"
+                : "other-message"
+            }`}
           >
             {message.content}
           </div>
         ))}
       </div>
       <div className="content-wrapper">
-        <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
+        <form
+          onSubmit={sendMessage}
+          style={{ display: "flex", alignItems: "center" }}
+        >
           <TextField
             label="write a message"
             variant="filled"
@@ -183,7 +197,12 @@ const ChatRoom = ({ chatRoomId, userId }) => {
               },
             }}
           />
-          <Button type="submit" variant="contained" color="success" sx={{ marginLeft: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="success"
+            sx={{ marginLeft: 2 }}
+          >
             send
           </Button>
         </form>

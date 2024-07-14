@@ -1,7 +1,7 @@
 from flask import Flask, session, jsonify, request
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit, join_room
+from flask_socketio import SocketIO, join_room
 from sqlalchemy import or_, and_
 from models import db, User, ChatRoom, Message
 from authentication import authentication_bp
@@ -10,15 +10,14 @@ import os
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", transports=['websocket'])
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app, supports_credentials=True)
-app.config.from_pyfile("/login/backend/config.py")
+app.config.from_pyfile("../config.py")
 app.register_blueprint(authentication_bp)
 
-os.environ['CONFIG'] = "/login/backend/config.py"
-
+os.environ['CONFIG'] = "../config.py"
 
 db.init_app(app)
 
@@ -33,7 +32,7 @@ with app.app_context():
                           password=hashed_password)
         db.session.add(admin_user)
         db.session.commit()
-        
+
 
 @app.route("/@me")
 def get_current_user():
@@ -53,30 +52,30 @@ def get_current_user():
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    logged_in_user_id = session.get('user_id')
-    users = User.query.all()
-    user_data = [{'id': user.id, 'name': user.name}
-                 for user in users if user.id != logged_in_user_id]
-    return jsonify(user_data)
+    current_user_id = session.get('user_id')
+    users = User.query.filter(User.id != current_user_id).all()
+    users_data = [{
+        'id': user.id,
+        'name': user.name
+    } for user in users]
+    return jsonify(users_data)
 
 
 @app.route("/start_chat", methods=["POST"])
 def create_or_get_chatroom():
-    user_id_1 = session.get('user_id')
-    target_user_id = request.json.get('user_id_2')
+    initiator_id = session.get('user_id')
+    target_id = request.json.get('user_id_2')
 
-    initiator_id = user_id_1
-    target_id = target_user_id
+    if initiator_id == target_id:
+        return jsonify({"chatroom_id": None})
 
-    if user_id_1 != target_user_id:
-        initiator_id, target_id = target_user_id, user_id_1
-    existing_chatroom = ChatRoom.query.filter(or_(
+    chatroom = ChatRoom.query.filter(or_(
         and_(ChatRoom.name1 == initiator_id, ChatRoom.name2 == target_id),
         and_(ChatRoom.name1 == target_id, ChatRoom.name2 == initiator_id)
     )).first()
+    if chatroom:
+        return jsonify({"chatroom_id": chatroom.id})
 
-    if existing_chatroom:
-        return jsonify({"chatroom_id": existing_chatroom.id})
     chatroom = ChatRoom(name1=initiator_id, name2=target_id,
                         description="Chatroom for users")
     db.session.add(chatroom)
@@ -85,7 +84,7 @@ def create_or_get_chatroom():
     return jsonify({"chatroom_id": chatroom.id})
 
 
-@app.route("/send_message", methods=["POST"])
+@app.route("/send_message", methods=["POST"])            
 def send_message():
     user_id = session.get("user_id")
     if not user_id:
@@ -95,11 +94,15 @@ def send_message():
     chatroom_id = request.json.get("chatroom_id")
     content = request.json.get("content")
 
-    if not (recipient_id and content and chatroom_id):
+    if not (recipient_id and chatroom_id and content):
         return jsonify({"error": "Invalid data"}), 400
 
-    message = Message(sender_id=user_id, recipient_id=recipient_id,
-                      content=content, chatroom_id=chatroom_id)
+    message = Message(
+        sender_id=user_id,
+        recipient_id=recipient_id,
+        content=content,
+        chatroom_id=chatroom_id,
+    )
     db.session.add(message)
     db.session.commit()
 
@@ -116,8 +119,6 @@ def send_message():
     return jsonify({"message_id": message.id})
 
 
-
-
 @app.route('/messages', methods=['GET'])
 def get_messages():
     user_id = session.get("user_id")
@@ -128,15 +129,15 @@ def get_messages():
         return jsonify({"error": "Unauthorized"}), 401
 
     if not (chatroom_id and target_user_id):
-        return jsonify({"error": "Invalid data"}), 400
+        return jsonify({"error": "Missing required parameters"}), 400
 
     messages = Message.query.filter(
         Message.chatroom_id == chatroom_id,
         or_(
-            and_(Message.sender_id == user_id,
-                 Message.recipient_id == target_user_id),
-            and_(Message.sender_id == target_user_id,
-                 Message.recipient_id == user_id)
+            Message.sender_id == user_id,
+            Message.recipient_id == user_id,
+            Message.sender_id == target_user_id,
+            Message.recipient_id == target_user_id
         )
     ).all()
 
@@ -152,20 +153,18 @@ def get_messages():
 
 
 @socketio.on('connect')
-def test_connect():
+def handle_connect():
     print('Client connected')
 
-
 @socketio.on('disconnect')
-def test_disconnect():
+def handle_disconnect():
     print('Client disconnected')
 
-
 @socketio.on('join')
-def on_join(data):
-    chatroom_id = data['chatroom_id']
-    join_room(chatroom_id)
-    print(f"User joined chatroom {chatroom_id}")
+def handle_join(data):
+    room = data['chatroom_id']
+    join_room(room)
+    print(f"User joined chatroom {room}")
 
 
 def init_db():
@@ -178,7 +177,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         command = sys.argv[1]
         if command == "start":
-            socketio.run(app, debug=True)
+            socketio.run(app, host='0.0.0.0', debug=True)
         elif command == "init_db":
             init_db()
     else:
