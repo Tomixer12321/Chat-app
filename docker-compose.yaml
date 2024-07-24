@@ -9,23 +9,29 @@ services:
       POSTGRES_PASSWORD: password
     ports: 
       - '5432:5432'
+      
   backend:
     build: ./backend
     ports:
       - '5000:5000'
     volumes:
-        - ./backend:/app
-    depends_on: 
+      - ./backend:/app
+    depends_on:
       - postgres
+    environment:
+      FLASK_ENV: development  # Nastaví Flask na vývojový mód
+    command: sh -c "pip install -r requirements.txt && python app/app.py start"
+
   frontend: 
-    build: ./frontend
-    ports: 
-      - '3000:3000'
-    volumes: 
-      - ./frontend/src:/app/src
-    stdin_open: true
-    tty: true
-    depends_on: 
-      - backend
+      build: ./frontend
+      ports: 
+        - '3000:3000'
+      volumes: 
+        - ./frontend/src:/app/src
+      stdin_open: true
+      tty: true
+      depends_on: 
+        - backend
+
 volumes: 
   data:
