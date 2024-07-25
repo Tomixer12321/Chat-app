@@ -9,54 +9,26 @@
 - **Real-time Chat:** Send and receive messages instantly between users.
 - **Change Password:** Option to change the password for increased account security.
 
-## Frontend Setup
+## Setup using Docker
 
 1. Clone this repository:
    ```bash
    git clone https://github.com/your-username/Chat-app.git
-
    ```
+
 2. Navigate to the project directory:
    ```bash
    cd Chat-app
-
-   ```
-3. Install the necessary dependencies:
-   ```bash
-   npm install
-
-   ```
-4. Start the application:
-   ```bash
-   npm start
    ```
 
-## Backend Setup
-
-1. Navigate to the backend directory:
-
+3. Build the Docker containers:
    ```bash
-   cd backend
-
+   docker-compose build
    ```
 
-2. Install Python dependencies:
-
+4. Start the Docker containers:
    ```bash
-   pip install -r requirements.txt
-
-   ```
-
-3. Start the backend server:
-
-   ```bash
-   python app/app.py start
-
-   ```
-
-4. Initialize the database:
-   ```bash
-   python app/app.py init_db
+   docker-compose up -d
    ```
 
 ## Usage
@@ -65,6 +37,29 @@
 2. Create an account on the registration page.
 3. Log in with your credentials.
 4. Start chatting with other users in real-time.
+## Development
+
+If you want to further develop this application, you need to run the backend and the PostgreSQL database using Docker, and start the frontend manually.
+
+1. Start the PostgreSQL database and backend containers:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+3. Install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Start the frontend application:
+   ```bash
+   npm start
+   ```
 
 ## Contributing
 

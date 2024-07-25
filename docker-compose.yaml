@@ -19,7 +19,7 @@ services:
     depends_on:
       - postgres
     environment:
-      FLASK_ENV: development  # Nastaví Flask na vývojový mód
+      FLASK_ENV: development
     command: sh -c "pip install -r requirements.txt && python app/app.py start"
 
   frontend: 
